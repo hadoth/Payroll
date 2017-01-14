@@ -346,7 +346,7 @@ public class PayrollGUI{
 			// data zatrudnienia i pensja
 		employeePanel.setLayout(innerLayout);
 				// data zatrudnienia
-		JLabel employmentDateLabel = new JLabel("Data urodzenia:");
+		JLabel employmentDateLabel = new JLabel("Data zatrudnienia:");
 		employmentDateInput = new JTextField(LocalDate.now().toString());
 		employmentDateInput.setPreferredSize(new Dimension(90,30));
 		employmentDateButton = new JButton(new ImageIcon("img/CalendarIcon.png"));

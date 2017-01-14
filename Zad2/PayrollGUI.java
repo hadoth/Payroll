@@ -59,6 +59,12 @@ public class PayrollGUI{
 	private Icon removeEmpIcon = new ImageIcon("img/RemoveUserIcon.png");
 	
 	// przyciski i ikony panelu dodającego pracowników
+	JTextField nameInput;
+	JTextField surnameInput;
+	JComboBox<String> titleInput;
+	JComboBox<Gender> genderInput;
+	JTextField peselInput;
+	JTextField salaryInput; 
 	JPanel addCards;
 	JButton birthDateButton;
 	JTextField birthDateInput;
@@ -80,6 +86,7 @@ public class PayrollGUI{
 	String[][] data = new String[0][0];
 	String[] columnNames = {"dzień", "początek", "koniec", "budynek", "sala", "nazwa"};
 	JTable activitiesTable;
+	JButton createAdEmp;
 	
 	/*
 	 * metoda programLoaded tworzy ramkę i wypełnia ją podstawowym interfejsem
@@ -291,15 +298,15 @@ public class PayrollGUI{
 		namePanel.setLayout(innerLayout);
 				// imię
 		JLabel nameLabel = new JLabel("Imię");
-		JTextField nameInput = new JTextField();
+		nameInput = new JTextField();
 		nameInput.setPreferredSize(new Dimension(90,30));
 				// nazwisko
 		JLabel surnameLabel = new JLabel("Nazwisko:");
-		JTextField surnameInput = new JTextField();
+		surnameInput = new JTextField();
 		surnameInput.setPreferredSize(new Dimension(150,30));
 				// tytuł
 		JLabel titleLabel = new JLabel("tytuł:");
-		JComboBox<String> titleInput = new JComboBox<String>(titles);
+		titleInput = new JComboBox<String>(titles);
 				// dodanie składowych
 		namePanel.add(nameLabel);
 		namePanel.add(nameInput);
@@ -312,7 +319,7 @@ public class PayrollGUI{
 		genderBirthPanel.setLayout(innerLayout);
 				//płeć
 		JLabel genderLabel = new JLabel("Płeć:");
-		JComboBox<Gender> genderInput = new JComboBox<Gender>(genders);
+		genderInput = new JComboBox<Gender>(genders);
 				// data urodzenia
 		JLabel birthDateLabel = new JLabel("Data urodzenia:");
 		birthDateInput = new JTextField(LocalDate.now().toString());
@@ -331,7 +338,7 @@ public class PayrollGUI{
 			// pesel 
 		peselPanel.setLayout(innerLayout);
 		JLabel peselLabel = new JLabel("PESEL: ");
-		JTextField peselInput = new JTextField();
+		peselInput = new JTextField();
 		peselInput.setPreferredSize(new Dimension(90,30));
 		peselPanel.add(peselLabel);
 		peselPanel.add(peselInput);
@@ -348,7 +355,7 @@ public class PayrollGUI{
 		employmentDateButton.addActionListener(addListener);
 				// pensja
 		JLabel salaryLabel = new JLabel("Pensja: ");
-		JTextField salaryInput = new JTextField();
+		salaryInput = new JTextField();
 		salaryInput.setPreferredSize(new Dimension(90,30));
 		JLabel salaryMoneyLabel = new JLabel("ZŁ");
 				// dodanie składników
@@ -392,6 +399,7 @@ public class PayrollGUI{
 		// panele specjalistyczne pracowników
 			// definicja
 		JPanel addressPanelAd = new JPanel();
+		JPanel createPanelAd = new JPanel();
 		JPanel addressPanelEd = new JPanel();
 		JPanel activityPanel = new JPanel();
 		JPanel addedActivityPanel = new JPanel();
@@ -406,6 +414,10 @@ public class PayrollGUI{
 		shiftPanel.setLayout(innerLayout);
 
 			// definicja składowych
+		createAdEmp = new JButton("Utwórz");
+		createAdEmp.addActionListener(addListener);
+		createAdEmp.setName("createAd");
+		createPanelAd.add(createAdEmp);
 		buildingInputAd = new JTextField();
 		buildingInputAd.setPreferredSize(new Dimension(60,30));
 		roomInputAd = new JTextField();
@@ -468,6 +480,7 @@ public class PayrollGUI{
 		edEmpPanel.add(activityPanel);
 		edEmpPanel.add(addedActivityPanel);
 		adEmpPanel.add(addressPanelAd);
+		adEmpPanel.add(createPanelAd);
 		mntEmpPanel.add(districtPanel);
 		secEmpPanel.add(districtPanel);
 		secEmpPanel.add(shiftPanel);
@@ -612,8 +625,26 @@ public class PayrollGUI{
 								result[i][j] = data[i][j];
 							}
 						}
-						
 						break;
+					case "createAd":
+						try{
+							String name = nameInput.getText();
+							String surname = surnameInput.getText();
+							String title = (String)titleInput.getSelectedItem();
+							Gender gender = (Gender)genderInput.getSelectedItem();
+							Money salary = new Money(Integer.parseInt(salaryInput.getText()));
+							LocalDate birthDate = LocalDate.parse(birthDateInput.getText());
+							LocalDate employmentDate = LocalDate.parse(employmentDateInput.getText());
+							UniAddress location = new UniAddress(buildingInputAd.getText(), Integer.parseInt(roomInputAd.getText()));
+							Pesel pesel = new Pesel(peselInput.getText(), birthDate, gender);
+							fullList.add(new AdmEmp(name, surname, title, gender.toString(), salary.getMoney(), birthDate, employmentDate, pesel.getNumber(), location));
+							payrollShow();
+						} catch (Exception e) {
+							JOptionPane.showMessageDialog(payrollGUI,
+								    e.getMessage(),
+								    "Błąd",
+								    JOptionPane.ERROR_MESSAGE);
+						}
 				}
 			} // instance of JButton
 			if (action.getSource() instanceof JComboBox){
